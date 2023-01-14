@@ -1,0 +1,11 @@
+build
+/node_modules/**
+*.log
+*.dump
+.DS_Store
+*.node
+.test
+dist
+.tmp
+konsumdb
+db
