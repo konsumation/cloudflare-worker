@@ -1,5 +1,31 @@
 {
+  "name": "konsum-cloudflare-worker",
+  "version": "0.0.0-semantic-release",
+  "publishConfig": {
+    "access": "public"
+  },
+  "contributors": [
+    {
+      "name": "Markus Felten",
+      "email": "markus.felten@gmx.de"
+    },
+    {
+      "name": "Konstantin Karpman"
+    }
+  ],
   "devDependencies": {
-    "@konsumation/openapi": "^1.0.2"
+    "@konsumation/openapi": "^1.0.2",
+    "semantic-release": "^20.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/konsumation/konsum-cloudflare-worker"
+  },
+  "bugs": {
+    "url": "https://github.com/konsumation/konsum-cloudflare-worker/issues"
+  },
+  "homepage": "https://github.com/konsumation/konsum-cloudflare-worker#readme",
+  "template": {
+    "inheritFrom": "konsumation/template"
   }
 }
