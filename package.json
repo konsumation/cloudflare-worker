@@ -5,7 +5,8 @@
     "access": "public"
   },
   "scripts": {
-    "publish" : "wrangler publish"
+    "start": "npx wrangler dev src/index.js",
+    "publish": "wrangler publish"
   },
   "contributors": [
     {
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@konsumation/openapi": "^1.0.2",
     "semantic-release": "^20.0.2",
+    "vitest": "^0.27.1",
     "wrangler": "^2.7.1"
   },
   "repository": {
