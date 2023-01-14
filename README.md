@@ -1,0 +1,5 @@
+[![npm](https://img.shields.io/npm/v/konsum-cloudflare-worker.svg)](https://www.npmjs.com/package/konsum-cloudflare-worker)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![Open Bundle](https://bundlejs.com/badge-light.svg)](https://bundlejs.com/?q=konsum-cloudflare-worker)
+[![downloads](http://img.shields.io/npm/dm/konsum-cloudflare-worker.svg?style=flat-square)](https://npmjs.org/package/konsum-cloudflare-worker)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fkonsumation%2Fkonsum-cloudflare-worker%2Fbadge\&style=flat)](https://actions-badge.atrox.dev/konsumation/konsum-cloudflare-worker/goto)
