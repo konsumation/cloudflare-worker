@@ -4,6 +4,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "publish" : "wrangler publish"
+  },
   "contributors": [
     {
       "name": "Markus Felten",
@@ -15,7 +18,8 @@
   ],
   "devDependencies": {
     "@konsumation/openapi": "^1.0.2",
-    "semantic-release": "^20.0.2"
+    "semantic-release": "^20.0.2",
+    "wrangler": "^2.7.1"
   },
   "repository": {
     "type": "git",
