@@ -53,7 +53,7 @@ Try send a POST request using curl or another tool.
 
 Try the below curl command to send JSON:
 
-$ curl -X POST <worker> -H "Content-Type: application/json" -d '{"abc": "def"}'
+$ curl -X POST https://konsum-cloudflare-worker.konsumation.workers.dev/post -H "Content-Type: application/json" -d '{"abc": "def"}'
 */
 router.post("/post", async request => {
   // Create a base object with some fields.
@@ -76,6 +76,47 @@ router.post("/post", async request => {
     }
   })
 })
+
+router.post("/postxxx", async (request) => {
+  let fields = {
+    "asn": request.cf.asn,
+    "colo": request.cf.colo
+  };
+  if (request.headers.get("Content-Type") === "application/json") {
+    fields["json"] = await request.json();
+  }
+  const returnData = JSON.stringify(fields, null, 2);
+  return new Response(returnData, {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+});
+router.post("/authenticate", async (request) => {
+  let fields = {
+    "asn": request.cf.asn,
+    "colo": request.cf.colo
+  };
+  if (request.headers.get("Content-Type") === "application/json") {
+    fields["json"] = await request.json();
+  }
+  const returnData = JSON.stringify(fields, null, 2);
+  return new Response(returnData, {
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    }
+  });
+});
+
+router.options("*", async (request) => {
+  return new Response({}, {
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, GET, OPTIONS"
+    }
+  });
+});
 
 /*
 This is the last route we define, it will match anything that hasn't hit a route we've defined
