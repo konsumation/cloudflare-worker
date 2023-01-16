@@ -1,4 +1,11 @@
-node_modules/
-worker/
-.cargo-ok
-package-lock.json
+build
+/node_modules/**
+*.log
+*.dump
+.DS_Store
+*.node
+.test
+dist
+.tmp
+konsumdb
+db

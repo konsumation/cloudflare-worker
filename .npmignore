@@ -1,0 +1,13 @@
+build
+tests
+doc
+db
+pkg
+*.tgz
+*.log
+*.tmp
+.vscode
+config
+.github
+openapi
+dist
