@@ -1,11 +1,11 @@
 {
-  "description": "package for creating workers templates",
-  "main": "index.js",
   "name": "konsum-cloudflare-worker",
   "version": "0.0.0-semantic-release",
   "publishConfig": {
     "access": "public"
   },
+  "main": "index.js",
+  "description": "package for creating workers templates",
   "contributors": [
     {
       "name": "Markus Felten",
