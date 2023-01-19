@@ -1,5 +1,5 @@
 name = "konsum-cloudflare-worker"
-main = "index.js"
+main = "src/index.js"
 account_id = "00a08fc9fe99c2645d832c8446ccc452"
 workers_dev = true
 compatibility_date = "2023-01-15"
