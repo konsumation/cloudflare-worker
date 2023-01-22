@@ -4,3 +4,6 @@ account_id = "00a08fc9fe99c2645d832c8446ccc452"
 workers_dev = true
 compatibility_date = "2023-01-15"
 
+kv_namespaces = [
+  { binding = "KONSUM", id = "fec1ce50039b4dbd8eb4738889c4ef60" }
+]
