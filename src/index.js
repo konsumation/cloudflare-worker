@@ -1,7 +1,10 @@
 import { Router } from "itty-router";
+import sha256 from "crypto-js/sha256";
+import  cryptoJs from  "crypto-js";
+import jsonwebtoken from "jsonwebtoken";
 
 const router = Router();
-
+//const TOKEN_KEY = "sasffaFAFA34";
 router.get("/", () => {
   return new Response(
     "Hello, world! This is the root page of your Worker template."
@@ -16,7 +19,6 @@ router.get("/state", () => {
     },
   });
 });
-
 
 const corsHeader = {
   "Access-Control-Allow-Headers": "*",
@@ -66,9 +68,61 @@ router.post("/post", async (request) => {
   });
 });
 
-router.post("/authenticate", async (request) => {
+router.post("/register", async (request) => {
+  const url = new URL(request.url);
+  const { pathname } = url;
+  let response = { pathname };
+  const { username, password } = await request.json();
 
-  return new Response("OK", {
+  const user = await KONSUM.get(`user:${username}`);
+  if (user) {
+    response = {
+      error: "User exists.",
+    };
+  } else {
+    const hashedPassword = sha256(password).toString(cryptoJs.enc.Hex);
+    await KONSUM.put(`user:${username}`, hashedPassword);
+
+    const token = jsonwebtoken.sign({ username }, TOKEN_KEY, {
+      expiresIn: "2h",
+    });
+
+    await KONSUM.put(`user_token:${token}`, username);
+
+    response = {
+      token,
+    };
+  }
+
+  return new Response(JSON.stringify(response), {
+    headers: {
+      "Content-Type": "application/json",
+      ...corsHeader,
+    },
+  });
+});
+
+router.post("/authenticate", async (request) => {
+  const { username, password } = await request.json()
+  const hashedPassword = sha256(password).toString(cryptoJs.enc.Hex)
+  const storedPassword = await KONSUM.get(`user:${username}`)
+  if (storedPassword === hashedPassword) {
+    const token = jsonwebtoken.sign({ username }, TOKEN_KEY, {
+      expiresIn: '2h',
+    })
+
+    await KONSUM.put(`user_token:${token}`, username)
+
+    response = {
+      token,
+    }
+  } else {
+    response = {
+      error: 'Invalid credientials.',
+    }
+  }
+
+  return new Response(JSON.stringify(response), {
     headers: {
       "Content-Type": "application/json",
       ...corsHeader,
