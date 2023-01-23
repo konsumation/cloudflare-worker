@@ -23,7 +23,7 @@
   "dependencies": {
     "crypto-js": "^4.1.1",
     "itty-router": "^2.1.9",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "serverless-cloudflare-workers": "^1.2.0"
   },
   "devDependencies": {
