@@ -1,15 +1,29 @@
 import { Router } from "itty-router";
 import sha256 from "crypto-js/sha256";
-import  cryptoJs from  "crypto-js";
-import jsonwebtoken from "jsonwebtoken";
+import cryptoJs from "crypto-js";
 
 const router = Router();
-//const TOKEN_KEY = "sasffaFAFA34";
+const TOKEN_KEY = "sasffaFAFA34";
 router.get("/", () => {
   return new Response(
     "Hello, world! This is the root page of your Worker template."
   );
 });
+
+const secret = "sasffaFAFA34";
+const header = { alg: "HS256", typ: "JWT" };
+
+const encode = (data) => {
+  const encoder = new TextEncoder();
+  return btoa(encoder.encode(JSON.stringify(data)));
+};
+
+const sign = (header, user, secret) => {
+  const encodedHeader = encode(header);
+  const encodedPayload = encode(user);
+  const signature = btoa(encodedHeader + "." + encodedPayload + secret);
+  return encodedHeader + "." + encodedPayload + "." + signature;
+};
 
 router.get("/state", () => {
   return new Response(JSON.stringify({ version: "1.1.1" }), {
@@ -83,7 +97,7 @@ router.post("/register", async (request) => {
     const hashedPassword = sha256(password).toString(cryptoJs.enc.Hex);
     await KONSUM.put(`user:${username}`, hashedPassword);
 
-    const token = jsonwebtoken.sign({ username }, TOKEN_KEY, {
+    const token = jwt.sign({ username }, TOKEN_KEY, {
       expiresIn: "2h",
     });
 
@@ -103,23 +117,30 @@ router.post("/register", async (request) => {
 });
 
 router.post("/authenticate", async (request) => {
-  const { username, password } = await request.json()
-  const hashedPassword = sha256(password).toString(cryptoJs.enc.Hex)
-  const storedPassword = await KONSUM.get(`user:${username}`)
+  const { username, password } = await request.json();
+  const hashedPassword = sha256(password).toString(cryptoJs.enc.Hex);
+  const storedPassword = await KONSUM.get(`user:${username}`);
   if (storedPassword === hashedPassword) {
-    const token = jsonwebtoken.sign({ username }, TOKEN_KEY, {
-      expiresIn: '2h',
-    })
-
-    await KONSUM.put(`user_token:${token}`, username)
+    const claims = {
+      name: username,
+      entitlements: ["konsum"],
+    };
+    /*
+    const access_token = jwt.sign(claims, TOKEN_KEY, {
+      expiresIn: "2h",
+    });
+    */
+    const access_token = sign(header, username, secret);
+    await KONSUM.put(`user_token:${access_token}`, username);
 
     response = {
-      token,
-    }
+      access_token,
+      token_type: "bearer",
+    };
   } else {
     response = {
-      error: 'Invalid credientials.',
-    }
+      error: "Invalid credientials.",
+    };
   }
 
   return new Response(JSON.stringify(response), {
