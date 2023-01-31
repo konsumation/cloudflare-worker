@@ -1,10 +1,11 @@
 name = "konsum-cloudflare-worker"
 main = "src/index.mjs"
-account_id = "00a08fc9fe99c2645d832c8446ccc452"
+account_id = "e881ef579422d5891a1045e5eb1964c6"
 workers_dev = true
 compatibility_date = "2023-01-15"
 node_compat = true
 
-kv_namespaces = [
-  { binding = "KONSUM", id = "fec1ce50039b4dbd8eb4738889c4ef60",preview_id = "91d634f8a3fc409e8e1511b764ef2218" },
-]
+[[kv_namespaces]]
+binding = "KONSUM"
+id = "fec1ce50039b4dbd8eb4738889c4ef60"
+preview_id = "91d634f8a3fc409e8e1511b764ef2218"
