@@ -4,8 +4,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "src/index.js",
-  "description": "package for creating workers templates",
+  "main": "src/index.mjs",
+  "description": "konsum api in a cloudflare worker",
   "contributors": [
     {
       "name": "Markus Felten",
@@ -17,8 +17,8 @@
   ],
   "scripts": {
     "publish": "wrangler publish",
-    "start": "wrangler dev && npx wrangler dev src/index.js",
-    "format": "prettier --write '**/*.{js,css,json,md}'"
+    "start": "wrangler dev",
+    "format": "prettier --write '**/*.{js,mjs,css,json,md}'"
   },
   "dependencies": {
     "crypto-js": "^4.1.1",
