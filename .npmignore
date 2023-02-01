@@ -11,3 +11,4 @@ config
 .github
 openapi
 dist
+wrangler.toml
