@@ -1,6 +1,8 @@
 import { Router } from "itty-router";
 import sha256 from "crypto-js/sha256";
 import cryptoJs from "crypto-js";
+import jwt from '@tsndr/cloudflare-worker-jwt'
+
 
 const router = Router();
 const TOKEN_KEY = "sasffaFAFA34";
@@ -45,15 +47,11 @@ const corsHeader = {
 $ curl -X POST https://konsum-cloudflare-worker.konsumation.workers.dev/post -H "Content-Type: application/json" -d '{"abc": "def"}'
 */
 router.post("/postxxx", async (request) => {
-  let fields = {
-    asn: request.cf.asn,
-    colo: request.cf.colo,
-  };
-  if (request.headers.get("Content-Type") === "application/json") {
-    fields["json"] = await request.json();
-  }
-  const returnData = JSON.stringify(fields, null, 2);
-  return new Response(returnData, {
+
+  // Creating a token
+  const token = await jwt.sign({ name: 'John Doe', email: 'john.doe@gmail.com' }, 'secret')
+
+  return new Response(token, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -130,12 +128,15 @@ router.post("/authenticate", async (request) => {
       expiresIn: "2h",
     });
     */
-    const access_token = sign(header, username, secret);
+    const access_token = await jwt.sign({ claims}, TOKEN_KEY)
+
+    //const access_token = sign(header, username, secret);
     await KONSUM.put(`user_token:${access_token}`, username);
 
     response = {
       access_token,
       token_type: "bearer",
+      refresh_token: access_token
     };
   } else {
     response = {
