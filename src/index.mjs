@@ -121,14 +121,16 @@ router.post("/authenticate", async (request) => {
   if (storedPassword === hashedPassword) {
     const claims = {
       name: username,
-      entitlements: ["konsum"],
+      //TODO get entitlements from database
+      entitlements: "konsum,konsum.category.add",
+      exp: Math.floor(Date.now() / 1000) + (2 * (60 * 60)) // 2 hours
     };
     /*
     const access_token = jwt.sign(claims, TOKEN_KEY, {
       expiresIn: "2h",
     });
     */
-    const access_token = await jwt.sign({ claims}, TOKEN_KEY)
+    const access_token = await jwt.sign(claims, TOKEN_KEY)
 
     //const access_token = sign(header, username, secret);
     await KONSUM.put(`user_token:${access_token}`, username);
