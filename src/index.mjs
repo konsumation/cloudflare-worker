@@ -1,8 +1,7 @@
 import { Router } from "itty-router";
 import sha256 from "crypto-js/sha256";
 import cryptoJs from "crypto-js";
-import jwt from '@tsndr/cloudflare-worker-jwt'
-
+import jwt from "@tsndr/cloudflare-worker-jwt";
 
 const router = Router();
 const TOKEN_KEY = "sasffaFAFA34";
@@ -46,17 +45,6 @@ const corsHeader = {
 
 $ curl -X POST https://konsum-cloudflare-worker.konsumation.workers.dev/post -H "Content-Type: application/json" -d '{"abc": "def"}'
 */
-router.post("/postxxx", async (request) => {
-
-  // Creating a token
-  const token = await jwt.sign({ name: 'John Doe', email: 'john.doe@gmail.com' }, 'secret')
-
-  return new Response(token, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-});
 
 router.post("/post", async (request) => {
   // Create a base object with some fields.
@@ -84,25 +72,34 @@ router.post("/register", async (request) => {
   const url = new URL(request.url);
   const { pathname } = url;
   let response = { pathname };
-  const { username, password } = await request.json();
-
-  const user = await KONSUM.get(`user:${username}`);
+  const { email, name, password } = await request.json();
+  console.log(email, name, password);
+  const user = await KONSUM.get(`user:${email}`);
+  const entitlements =
+    "konsum,konsum.category.add,konsum.category.modify,konsum.category.delete,konsum.meter.add,konsum.meter.modify,konsum.meter.delete,konsum.note.add,konsum.note.modify,konsum.note.delete,konsum.value.add,konsum.value.delete";
   if (user) {
     response = {
       error: "User exists.",
     };
   } else {
     const hashedPassword = sha256(password).toString(cryptoJs.enc.Hex);
-    await KONSUM.put(`user:${username}`, hashedPassword);
 
-    const token = jwt.sign({ username }, TOKEN_KEY, {
-      expiresIn: "2h",
-    });
+    const claims = {
+      name,
+      entitlements,
+      exp: Math.floor(Date.now() / 1000) + 2 * (60 * 60), // 2 hours
+    };
 
-    await KONSUM.put(`user_token:${token}`, username);
+    await KONSUM.put(`user:${email}`, { hashedPassword, name, entitlements });
+
+    const access_token = await jwt.sign(claims, TOKEN_KEY);
+
+    //await KONSUM.put(`user_token:${token}`, username);
 
     response = {
-      token,
+      access_token,
+      token_type: "bearer",
+      //refresh_token: access_token,
     };
   }
 
@@ -117,28 +114,26 @@ router.post("/register", async (request) => {
 router.post("/authenticate", async (request) => {
   const { username, password } = await request.json();
   const hashedPassword = sha256(password).toString(cryptoJs.enc.Hex);
-  const storedPassword = await KONSUM.get(`user:${username}`);
+  const storedUser = await KONSUM.get(`user:${username}`);
+  const storedPassword = storedUser.storedPassword;
+  const entitlements = storedUser.entitlements;
   if (storedPassword === hashedPassword) {
     const claims = {
       name: username,
       //TODO get entitlements from database
-      entitlements: "konsum,konsum.category.add",
-      exp: Math.floor(Date.now() / 1000) + (2 * (60 * 60)) // 2 hours
+      entitlements,
+      exp: Math.floor(Date.now() / 1000) + 2 * (60 * 60), // 2 hours
     };
-    /*
-    const access_token = jwt.sign(claims, TOKEN_KEY, {
-      expiresIn: "2h",
-    });
-    */
-    const access_token = await jwt.sign(claims, TOKEN_KEY)
+
+    const access_token = await jwt.sign(claims, TOKEN_KEY);
 
     //const access_token = sign(header, username, secret);
-    await KONSUM.put(`user_token:${access_token}`, username);
+    //await KONSUM.put(`user_token:${access_token}`, username);
 
     response = {
       access_token,
       token_type: "bearer",
-      refresh_token: access_token
+      refresh_token: access_token,
     };
   } else {
     response = {
