@@ -85,7 +85,7 @@ router.post("/register", async (request) => {
     const hashedPassword = sha256(password).toString(cryptoJs.enc.Hex);
 
     const claims = {
-      name,
+      email,
       entitlements,
       exp: Math.floor(Date.now() / 1000) + 2 * (60 * 60), // 2 hours
     };
