@@ -14,18 +14,6 @@ router.get("/", () => {
 const secret = "sasffaFAFA34";
 const header = { alg: "HS256", typ: "JWT" };
 
-const encode = (data) => {
-  //const encoder = new TextEncoder();
-  return btoa(JSON.stringify(data));
-};
-
-const sign = (header, user, secret) => {
-  const encodedHeader = encode(header);
-  const encodedPayload = encode(user);
-  const signature = btoa(encodedHeader + "." + encodedPayload + secret);
-  return encodedHeader + "." + encodedPayload + "." + signature;
-};
-
 router.get("/state", () => {
   return new Response(JSON.stringify({ version: "1.1.1" }), {
     headers: {
@@ -69,14 +57,12 @@ router.post("/post", async (request) => {
 });
 
 router.post("/register", async (request) => {
-  const url = new URL(request.url);
-  const { pathname } = url;
-  let response = { pathname };
   const { email, name, password } = await request.json();
-  console.log(email, name, password);
+  //console.log(email, name, password);
   const user = await KONSUM.get(`user:${email}`);
   const entitlements =
     "konsum,konsum.category.add,konsum.category.modify,konsum.category.delete,konsum.meter.add,konsum.meter.modify,konsum.meter.delete,konsum.note.add,konsum.note.modify,konsum.note.delete,konsum.value.add,konsum.value.delete";
+  //TODO deside when user exists message return
   if (user) {
     response = {
       error: "User exists.",
@@ -91,7 +77,8 @@ router.post("/register", async (request) => {
     };
 
     await KONSUM.put(
-      (`user:${email}` , JSON.stringify({ hashedPassword, name, entitlements }))
+      `user:${email}`,
+      JSON.stringify({ password:hashedPassword, name, entitlements })
     );
 
     const access_token = await jwt.sign(claims, TOKEN_KEY);
@@ -116,33 +103,37 @@ router.post("/register", async (request) => {
 router.post("/authenticate", async (request) => {
   const { username, password } = await request.json();
   const hashedPassword = sha256(password).toString(cryptoJs.enc.Hex);
-  const storedUser = await KONSUM.get(`user:${username}`);
-  const storedPassword = storedUser.storedPassword;
-  const entitlements = storedUser.entitlements;
-  if (storedPassword === hashedPassword) {
-    const claims = {
-      name: username,
-      //TODO get entitlements from database
-      entitlements,
-      exp: Math.floor(Date.now() / 1000) + 2 * (60 * 60), // 2 hours
-    };
-
-    const access_token = await jwt.sign(claims, TOKEN_KEY);
-
-    //const access_token = sign(header, username, secret);
-    //await KONSUM.put(`user_token:${access_token}`, username);
-
-    response = {
-      access_token,
-      token_type: "bearer",
-      refresh_token: access_token,
-    };
+  const storedUser = JSON.parse(await KONSUM.get(`user:${username}`));
+  if (!storedUser) {
+    response = { error: " User does not exists" };
   } else {
-    response = {
-      error: "Invalid credientials.",
-    };
-  }
+    const storedPassword = storedUser.password;
+    const entitlements = storedUser.entitlements;
 
+    if (storedPassword === hashedPassword) {
+      const claims = {
+        name: username,
+        //TODO get entitlements from database
+        entitlements,
+        exp: Math.floor(Date.now() / 1000) + 2 * (60 * 60), // 2 hours
+      };
+
+      const access_token = await jwt.sign(claims, TOKEN_KEY);
+
+      //const access_token = sign(header, username, secret);
+      //await KONSUM.put(`user_token:${access_token}`, username);
+
+      response = {
+        access_token,
+        token_type: "bearer",
+        refresh_token: access_token,
+      };
+    } else {
+      response = {
+        error: "Invalid credientials.",
+      };
+    }
+  }
   return new Response(JSON.stringify(response), {
     headers: {
       "Content-Type": "application/json",
