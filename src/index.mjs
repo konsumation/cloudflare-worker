@@ -90,7 +90,9 @@ router.post("/register", async (request) => {
       exp: Math.floor(Date.now() / 1000) + 2 * (60 * 60), // 2 hours
     };
 
-    await KONSUM.put(`user:${email}`, { hashedPassword, name, entitlements });
+    await KONSUM.put(
+      (`user:${email}` , JSON.stringify({ hashedPassword, name, entitlements }))
+    );
 
     const access_token = await jwt.sign(claims, TOKEN_KEY);
 
