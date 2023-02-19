@@ -3,6 +3,7 @@ import sha256 from "crypto-js/sha256";
 import cryptoJs from "crypto-js";
 import jwt from "@tsndr/cloudflare-worker-jwt";
 
+
 const router = Router();
 const TOKEN_KEY = "sasffaFAFA34";
 router.get("/", () => {
@@ -11,8 +12,45 @@ router.get("/", () => {
   );
 });
 
-const secret = "sasffaFAFA34";
-const header = { alg: "HS256", typ: "JWT" };
+function authMiddleware(request, response) {
+  // Überprüfen Sie, ob der Authorization-Header vorhanden ist
+  //console.log("middl");
+  //console.log(request.headers.get("authorization"));
+
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader) {
+    return res.status(401).json({ message: "Authorization header missing" });
+  }
+
+  // Holen Sie den JWT-Token aus dem Authorization-Header
+  const token = authHeader.split(" ")[1];
+
+  // Überprüfen Sie, ob der Token gültig ist
+  try {
+    if (jwt.verify(token, TOKEN_KEY)) {
+      const { payload } = jwt.decode(token);
+      //console.log(payload);
+      request.state = { user: payload };
+    } else {
+      return false;
+    }
+  } catch (err) {
+    console.log(err);
+    return response.status(401).json({ message: "Invalid token" });
+  }
+}
+
+function enshureEntitlement(request, entitlement) {
+  const user = request.state.user;
+
+  if (user) {
+    if (user.entitlements.indexOf(entitlement) >= 0) {
+      return true;
+    }
+  }
+
+  return false; //new Error(`missing ${entitlement}`);
+}
 
 router.get("/state", () => {
   return new Response(JSON.stringify({ version: "1.1.1" }), {
@@ -78,7 +116,7 @@ router.post("/register", async (request) => {
 
     await KONSUM.put(
       `user:${email}`,
-      JSON.stringify({ password:hashedPassword, name, entitlements })
+      JSON.stringify({ password: hashedPassword, name, entitlements })
     );
 
     const access_token = await jwt.sign(claims, TOKEN_KEY);
@@ -138,6 +176,39 @@ router.post("/authenticate", async (request) => {
     headers: {
       "Content-Type": "application/json",
       ...corsHeader,
+    },
+  });
+});
+
+router.get("/category", () => {
+  //TODO Fullfill categories list
+  response = [];
+  return new Response(JSON.stringify(response), {
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+  });
+});
+
+router.put("/category/:category", authMiddleware, async (request) => {
+  if (enshureEntitlement(request, "konsum.category.add")) {
+    //TODO fullfill add category
+    const category = new Category(
+      request.params.category,
+      master,
+      request.body
+    );
+    await category.write(master.db);
+    response = { message: "updated" };
+  } else {
+    response = { message: "missing entitlemenet: konsum.category.add" };
+  }
+
+  return new Response(JSON.stringify(response), {
+    headers: {
+      ...corsHeader,
+      "Content-Type": "application/json",
     },
   });
 });

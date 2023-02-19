@@ -23,7 +23,7 @@
   "dependencies": {
     "@tsndr/cloudflare-worker-jwt": "^2.2.1",
     "crypto-js": "^4.1.1",
-    "itty-router": "^2.1.9",
+    "itty-router": "^3.0.11",
     "serverless-cloudflare-workers": "^1.2.0"
   },
   "devDependencies": {
