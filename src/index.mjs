@@ -3,7 +3,6 @@ import sha256 from "crypto-js/sha256";
 import cryptoJs from "crypto-js";
 import jwt from "@tsndr/cloudflare-worker-jwt";
 
-
 const router = Router();
 const TOKEN_KEY = "sasffaFAFA34";
 router.get("/", () => {
@@ -12,6 +11,14 @@ router.get("/", () => {
   );
 });
 
+function returnResponse(response) {
+  return new Response(JSON.stringify(response), {
+    headers: {
+      "Content-Type": "application/json",
+      ...corsHeader,
+    },
+  });
+}
 function authMiddleware(request, response) {
   // Überprüfen Sie, ob der Authorization-Header vorhanden ist
   //console.log("middl");
@@ -84,14 +91,7 @@ router.post("/post", async (request) => {
     fields["json"] = await request.json();
   }
 
-  // Serialise the JSON to a string.
-  const returnData = JSON.stringify(fields, null, 2);
-
-  return new Response(returnData, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  returnResponse(fields);
 });
 
 router.post("/register", async (request) => {
@@ -116,12 +116,10 @@ router.post("/register", async (request) => {
 
     await KONSUM.put(
       `user:${email}`,
-      JSON.stringify({ password: hashedPassword, name, entitlements })
+      JSON.stringify({ password: hashedPassword, name, entitlements: "" })
     );
 
     const access_token = await jwt.sign(claims, TOKEN_KEY);
-
-    //await KONSUM.put(`user_token:${token}`, username);
 
     response = {
       access_token,
@@ -129,13 +127,7 @@ router.post("/register", async (request) => {
       //refresh_token: access_token,
     };
   }
-
-  return new Response(JSON.stringify(response), {
-    headers: {
-      "Content-Type": "application/json",
-      ...corsHeader,
-    },
-  });
+  returnResponse(response);
 });
 
 router.post("/authenticate", async (request) => {
@@ -151,15 +143,11 @@ router.post("/authenticate", async (request) => {
     if (storedPassword === hashedPassword) {
       const claims = {
         name: username,
-        //TODO get entitlements from database
         entitlements,
         exp: Math.floor(Date.now() / 1000) + 2 * (60 * 60), // 2 hours
       };
 
       const access_token = await jwt.sign(claims, TOKEN_KEY);
-
-      //const access_token = sign(header, username, secret);
-      //await KONSUM.put(`user_token:${access_token}`, username);
 
       response = {
         access_token,
@@ -172,23 +160,14 @@ router.post("/authenticate", async (request) => {
       };
     }
   }
-  return new Response(JSON.stringify(response), {
-    headers: {
-      "Content-Type": "application/json",
-      ...corsHeader,
-    },
-  });
+
+  returnResponse(response);
 });
 
 router.get("/category", () => {
   //TODO Fullfill categories list
   response = [];
-  return new Response(JSON.stringify(response), {
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
-  });
+  returnResponse(response);
 });
 
 router.put("/category/:category", authMiddleware, async (request) => {
@@ -205,12 +184,7 @@ router.put("/category/:category", authMiddleware, async (request) => {
     response = { message: "missing entitlemenet: konsum.category.add" };
   }
 
-  return new Response(JSON.stringify(response), {
-    headers: {
-      ...corsHeader,
-      "Content-Type": "application/json",
-    },
-  });
+  returnResponse(response);
 });
 
 router.options("*", async (request) => {
