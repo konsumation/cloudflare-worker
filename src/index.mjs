@@ -2,6 +2,7 @@ import { Router } from "itty-router";
 import sha256 from "crypto-js/sha256";
 import cryptoJs from "crypto-js";
 import jwt from "@tsndr/cloudflare-worker-jwt";
+import { sendMail } from "./utils.mjs";
 
 const router = Router();
 const TOKEN_KEY = "sasffaFAFA34";
@@ -10,6 +11,12 @@ router.get("/", () => {
     "Hello, world! This is the root page of your Worker template."
   );
 });
+
+const corsHeader = {
+  "Access-Control-Allow-Headers": "*",
+  "Access-Control-Allow-Methods": "POST",
+  "Access-Control-Allow-Origin": "*",
+};
 
 function returnResponse(response) {
   return new Response(JSON.stringify(response), {
@@ -32,7 +39,7 @@ function authMiddleware(request, response) {
   // Holen Sie den JWT-Token aus dem Authorization-Header
   const token = authHeader.split(" ")[1];
 
-  // Überprüfen Sie, ob der Token gültig ist
+  // Überprüfen ob der Token gültig ist
   try {
     if (jwt.verify(token, TOKEN_KEY)) {
       const { payload } = jwt.decode(token);
@@ -68,12 +75,6 @@ router.get("/state", () => {
   });
 });
 
-const corsHeader = {
-  "Access-Control-Allow-Headers": "*",
-  "Access-Control-Allow-Methods": "POST",
-  "Access-Control-Allow-Origin": "*",
-};
-
 /*
 
 $ curl -X POST https://konsum-cloudflare-worker.konsumation.workers.dev/post -H "Content-Type: application/json" -d '{"abc": "def"}'
@@ -98,8 +99,7 @@ router.post("/register", async (request) => {
   const { email, name, password } = await request.json();
   //console.log(email, name, password);
   const user = await KONSUM.get(`user:${email}`);
-  const entitlements =
-    "konsum,konsum.category.add,konsum.category.modify,konsum.category.delete,konsum.meter.add,konsum.meter.modify,konsum.meter.delete,konsum.note.add,konsum.note.modify,konsum.note.delete,konsum.value.add,konsum.value.delete";
+
   //TODO deside when user exists message return
   if (user) {
     response = {
@@ -114,12 +114,22 @@ router.post("/register", async (request) => {
       exp: Math.floor(Date.now() / 1000) + 2 * (60 * 60), // 2 hours
     };
 
+    const access_token = await jwt.sign(claims, TOKEN_KEY);
+
     await KONSUM.put(
       `user:${email}`,
-      JSON.stringify({ password: hashedPassword, name, entitlements: "" })
+      JSON.stringify({
+        password: hashedPassword,
+        name,
+        entitlements: "confirmRegistration",
+        access_token,
+      })
     );
 
-    const access_token = await jwt.sign(claims, TOKEN_KEY);
+    const mailContent = `<p>Please confirm your email by clicking on the following link.</p>
+<a href=https://konsum-cloudflare-worker.konsumation.workers.dev/confirmRegistration/${access_token}> Click here</a>`;
+
+    sendMail(email, name, "konsum registration", mailContent);
 
     response = {
       access_token,
@@ -128,6 +138,26 @@ router.post("/register", async (request) => {
     };
   }
   returnResponse(response);
+});
+
+router.post("/confirmRegistration/:token", async (request) => {
+  const token = request.params.token;
+  if (jwt.verify(token, TOKEN_KEY)) {
+    const { payload } = jwt.decode(token);
+    const dbkey = `user:${payload.name}`;
+    const storedUser = JSON.parse(await KONSUM.get(dbkey));
+    if (storedUser) {
+      const entitlements =
+        "konsum,konsum.category.add,konsum.category.modify,konsum.category.delete,konsum.meter.add,konsum.meter.modify,konsum.meter.delete,konsum.note.add,konsum.note.modify,konsum.note.delete,konsum.value.add,konsum.value.delete";
+      delete storedUser.access_token;
+      storedUser.entitlement = entitlements;
+      await KONSUM.put(dbkey, JSON.stringify(storedUser));
+    } else {
+      //todo if user not found
+    }
+  } else {
+    //TODO "token has expired, please send new confirm email"
+  }
 });
 
 router.post("/authenticate", async (request) => {
