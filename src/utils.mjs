@@ -1,4 +1,4 @@
-export function sendMail(email, name = "guest", subject, mailContent) {
+export function sendMail(email, subject, mailContent,name = "guest") {
   new Request("https://api.mailchannels.net/tx/v1/send", {
     method: "POST",
     headers: {
@@ -14,7 +14,7 @@ export function sendMail(email, name = "guest", subject, mailContent) {
         email: "konsum@example.com",
         name: "Workers - MailChannels integration",
       },
-      subject: "Look! No servers",
+      subject,
       content: [
         {
           type: "text/plain",
@@ -24,3 +24,4 @@ export function sendMail(email, name = "guest", subject, mailContent) {
     }),
   });
 }
+

@@ -99,7 +99,7 @@ router.post("/register", async (request) => {
   const { email, name, password } = await request.json();
   //console.log(email, name, password);
   const user = await KONSUM.get(`user:${email}`);
-
+  const entitlements = "confirmRegistration";
   //TODO deside when user exists message return
   if (user) {
     response = {
@@ -121,7 +121,7 @@ router.post("/register", async (request) => {
       JSON.stringify({
         password: hashedPassword,
         name,
-        entitlements: "confirmRegistration",
+        entitlements,
         access_token,
       })
     );
@@ -129,7 +129,14 @@ router.post("/register", async (request) => {
     const mailContent = `<p>Please confirm your email by clicking on the following link.</p>
 <a href=https://konsum-cloudflare-worker.konsumation.workers.dev/confirmRegistration/${access_token}> Click here</a>`;
 
-    sendMail(email, name, "konsum registration", mailContent);
+    const mailResponse = await fetch(
+      sendMail(email, "konsum registration", "blablaTest", name)
+    );
+
+    if (!response.ok) {
+      console.log("got error by sending mail");
+      console.log(response);
+    }
 
     response = {
       access_token,
