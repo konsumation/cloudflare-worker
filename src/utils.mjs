@@ -1,5 +1,5 @@
-export function sendMail(email, subject, mailContent,name = "guest") {
-  new Request("https://api.mailchannels.net/tx/v1/send", {
+export function sendMail(email, subject, mailContent, name = "guest") {
+  return new Request("https://api.mailchannels.net/tx/v1/send", {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -24,4 +24,3 @@ export function sendMail(email, subject, mailContent,name = "guest") {
     }),
   });
 }
-

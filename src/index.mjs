@@ -92,7 +92,7 @@ router.post("/post", async (request) => {
     fields["json"] = await request.json();
   }
 
-  returnResponse(fields);
+  return returnResponse(fields);
 });
 
 router.post("/register", async (request) => {
@@ -102,6 +102,7 @@ router.post("/register", async (request) => {
   const entitlements = "confirmRegistration";
   //TODO deside when user exists message return
   if (user) {
+    console.log("user exists");
     response = {
       error: "User exists.",
     };
@@ -130,12 +131,12 @@ router.post("/register", async (request) => {
 <a href=https://konsum-cloudflare-worker.konsumation.workers.dev/confirmRegistration/${access_token}> Click here</a>`;
 
     const mailResponse = await fetch(
-      sendMail(email, "konsum registration", "blablaTest", name)
+      sendMail(email, "konsum registration", mailContent, name)
     );
 
-    if (!response.ok) {
+    if (!mailResponse.ok) {
       console.log("got error by sending mail");
-      console.log(response);
+      console.log(JSON.stringify(mailResponse, undefined, 2));
     }
 
     response = {
@@ -144,7 +145,7 @@ router.post("/register", async (request) => {
       //refresh_token: access_token,
     };
   }
-  returnResponse(response);
+  return returnResponse(response);
 });
 
 router.post("/confirmRegistration/:token", async (request) => {
@@ -198,13 +199,13 @@ router.post("/authenticate", async (request) => {
     }
   }
 
-  returnResponse(response);
+  return returnResponse(response);
 });
 
 router.get("/category", () => {
   //TODO Fullfill categories list
   response = [];
-  returnResponse(response);
+  return returnResponse(response);
 });
 
 router.put("/category/:category", authMiddleware, async (request) => {
@@ -221,7 +222,7 @@ router.put("/category/:category", authMiddleware, async (request) => {
     response = { message: "missing entitlemenet: konsum.category.add" };
   }
 
-  returnResponse(response);
+  return returnResponse(response);
 });
 
 router.options("*", async (request) => {
