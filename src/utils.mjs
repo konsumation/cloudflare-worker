@@ -1,5 +1,5 @@
-export function sendMail(email, subject, mailContent, name = "guest") {
-  return new Request("https://api.mailchannels.net/tx/v1/send", {
+export async function sendMail(email, subject, mailContent, name = "guest") {
+  return await fetch("https://api.mailchannels.net/tx/v1/send", {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -11,14 +11,14 @@ export function sendMail(email, subject, mailContent, name = "guest") {
         },
       ],
       from: {
-        email: "konsum@example.com",
+        email: "info@ramid.de",
         name: "Workers - MailChannels integration",
       },
       subject,
       content: [
         {
-          type: "text/plain",
-          mailContent,
+          type: "text/html",
+          value: mailContent,
         },
       ],
     }),

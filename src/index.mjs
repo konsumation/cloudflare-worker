@@ -130,20 +130,22 @@ router.post("/register", async (request) => {
     const mailContent = `<p>Please confirm your email by clicking on the following link.</p>
 <a href=https://konsum-cloudflare-worker.konsumation.workers.dev/confirmRegistration/${access_token}> Click here</a>`;
 
-    const mailResponse = await fetch(
-      sendMail(email, "konsum registration", mailContent, name)
+    const mailResponse = await sendMail(
+      email,
+      "konsum registration",
+      mailContent,
+      name
     );
-
-    if (!mailResponse.ok) {
-      console.log("got error by sending mail");
-      console.log(JSON.stringify(mailResponse, undefined, 2));
-    }
 
     response = {
       access_token,
       token_type: "bearer",
       //refresh_token: access_token,
     };
+
+    if (!mailResponse.ok) {
+      response["error"] = await mailResponse.text();
+    }
   }
   return returnResponse(response);
 });
