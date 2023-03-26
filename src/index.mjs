@@ -98,6 +98,7 @@ router.post("/post", async (request) => {
 router.post("/register", async (request) => {
   const { email, name, password } = await request.json();
   //console.log(email, name, password);
+  //await KONSUM.delete(`user:${email}`);
   const user = await KONSUM.get(`user:${email}`);
   const entitlements = "confirmRegistration";
   //TODO deside when user exists message return
@@ -128,7 +129,7 @@ router.post("/register", async (request) => {
     );
 
     const mailContent = `<p>Please confirm your email by clicking on the following link.</p>
-<a href=https://konsum-cloudflare-worker.konsumation.workers.dev/confirmRegistration/${access_token}> Click here</a>`;
+<a href=https://konsum-cloudflare-worker.konsumation.workers.dev/confirmRegistration?token=${access_token}> Click here</a>`;
 
     const mailResponse = await sendMail(
       email,
@@ -150,24 +151,28 @@ router.post("/register", async (request) => {
   return returnResponse(response);
 });
 
-router.post("/confirmRegistration/:token", async (request) => {
-  const token = request.params.token;
+router.get("/confirmRegistration*", async (request) => {
+  const token = request.query.token;
   if (jwt.verify(token, TOKEN_KEY)) {
     const { payload } = jwt.decode(token);
-    const dbkey = `user:${payload.name}`;
+    const dbkey = `user:${payload.email}`;
     const storedUser = JSON.parse(await KONSUM.get(dbkey));
     if (storedUser) {
       const entitlements =
         "konsum,konsum.category.add,konsum.category.modify,konsum.category.delete,konsum.meter.add,konsum.meter.modify,konsum.meter.delete,konsum.note.add,konsum.note.modify,konsum.note.delete,konsum.value.add,konsum.value.delete";
       delete storedUser.access_token;
-      storedUser.entitlement = entitlements;
+      storedUser.entitlements = entitlements;
       await KONSUM.put(dbkey, JSON.stringify(storedUser));
+      response = { statusText: "ok" };
     } else {
       //todo if user not found
+      response = { error: "user not found" };
     }
   } else {
     //TODO "token has expired, please send new confirm email"
+    response = { error: "token has expired, please send new confirm email" };
   }
+  return returnResponse(response);
 });
 
 router.post("/authenticate", async (request) => {
