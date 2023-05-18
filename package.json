@@ -16,7 +16,7 @@
     }
   ],
   "scripts": {
-    "publish": "wrangler publish",
+    "publish": "wrangler deploy",
     "start": "wrangler dev",
     "format": "prettier --write '**/*.{js,mjs,css,json,md}'"
   },
