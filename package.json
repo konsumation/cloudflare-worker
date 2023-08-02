@@ -30,7 +30,7 @@
     "@konsumation/openapi": "^1.1.0",
     "prettier": "^3.0.0",
     "semantic-release": "^21.0.7",
-    "vitest": "^0.33.0",
+    "vitest": "^0.34.1",
     "wrangler": "^3.3.0"
   },
   "repository": {
