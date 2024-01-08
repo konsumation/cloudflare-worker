@@ -27,7 +27,7 @@
     "serverless-cloudflare-workers": "^1.2.0"
   },
   "devDependencies": {
-    "@konsumation/openapi": "^1.1.1",
+    "@konsumation/openapi": "^1.1.4",
     "prettier": "^3.0.0",
     "semantic-release": "^22.0.12",
     "vitest": "^1.0.1",
