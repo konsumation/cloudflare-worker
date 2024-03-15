@@ -30,9 +30,9 @@
   "devDependencies": {
     "@konsumation/openapi": "^1.1.5",
     "prettier": "^3.0.0",
-    "semantic-release": "^23.0.2",
+    "semantic-release": "^23.0.3",
     "vitest": "^1.0.1",
-    "wrangler": "^3.32.0"
+    "wrangler": "^3.34.2"
   },
   "repository": {
     "type": "git",
