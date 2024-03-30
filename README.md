@@ -1,8 +1,11 @@
-[![npm](https://img.shields.io/npm/v/konsum-cloudflare-worker.svg)](https://www.npmjs.com/package/konsum-cloudflare-worker)
+[![npm](https://img.shields.io/npm/v/@konsumation/cloudflare-worker.svg)](https://www.npmjs.com/package/@konsumation/cloudflare-worker)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![bundlejs](https://deno.bundlejs.com/?q=konsum-cloudflare-worker\&badge=detailed)](https://bundlejs.com/?q=konsum-cloudflare-worker)
-[![downloads](http://img.shields.io/npm/dm/konsum-cloudflare-worker.svg?style=flat-square)](https://npmjs.org/package/konsum-cloudflare-worker)
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fkonsumation%2Fkonsum-cloudflare-worker%2Fbadge\&style=flat)](https://actions-badge.atrox.dev/konsumation/konsum-cloudflare-worker/goto)
+[![bundlejs](https://deno.bundlejs.com/?q=@konsumation/cloudflare-worker\&badge=detailed)](https://bundlejs.com/?q=@konsumation/cloudflare-worker)
+[![downloads](http://img.shields.io/npm/dm/@konsumation/cloudflare-worker.svg?style=flat-square)](https://npmjs.org/package/@konsumation/cloudflare-worker)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fkonsumation%2Fcloudflare-worker%2Fbadge\&style=flat)](https://actions-badge.atrox.dev/konsumation/cloudflare-worker/goto)
+[![Styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![Known Vulnerabilities](https://snyk.io/test/github/konsumation/cloudflare-worker/badge.svg)](https://snyk.io/test/github/konsumation/cloudflare-worker)
 ## Router
 
 This template demonstrates using the [`itty-router`](https://github.com/kwhitley/itty-router) package to add routing to your Cloudflare Workers.
