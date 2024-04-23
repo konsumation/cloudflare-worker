@@ -34,7 +34,7 @@
     "serverless-cloudflare-workers": "^1.2.0"
   },
   "devDependencies": {
-    "@konsumation/openapi": "^2.3.7",
+    "@konsumation/openapi": "^2.3.8",
     "ava": "^6.1.2",
     "c8": "^9.1.0",
     "documentation": "^14.0.3",
