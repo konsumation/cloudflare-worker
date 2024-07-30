@@ -4,6 +4,7 @@ bun.lockb
 *.log
 *.dump
 .DS_Store
+.wrangler
 *.node
 .test
 dist
