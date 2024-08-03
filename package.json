@@ -25,7 +25,8 @@
     "docs": "documentation readme --section=API ./src/**/*.mjs",
     "lint": "npm run lint:docs",
     "lint:docs": "documentation lint ./src/**/*.mjs",
-    "format": "prettier --write '**/*.{js,mjs,css,json,md}'"
+    "format": "prettier --write '**/*.{js,mjs,css,json,md}'",
+    "wrangler:publish": "wrangler deploy"
   },
   "dependencies": {
     "@tsndr/cloudflare-worker-jwt": "^2.2.1",
