@@ -42,7 +42,7 @@
     "prettier": "^3.0.0",
     "semantic-release": "^24.2.3",
     "vitest": "^3.0.1",
-    "wrangler": "^3.112.0"
+    "wrangler": "^3.114.0"
   },
   "repository": {
     "type": "git",
