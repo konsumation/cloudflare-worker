@@ -9,7 +9,7 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@v4.2.2
-      - uses: actions/setup-node@v4.2.0
+      - uses: actions/setup-node@v4.3.0
         with:
           node-version: 22.7.0
           cache: npm
@@ -20,7 +20,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4.2.2
       - name: prepare node
-        uses: actions/setup-node@v4.2.0
+        uses: actions/setup-node@v4.3.0
         with:
           node-version: 22.14.0
           cache: npm
