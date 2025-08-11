@@ -18,7 +18,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       - name: checkout
-        uses: actions/checkout@v4.3.0
+        uses: actions/checkout@v5.0.0
       - name: prepare node
         uses: actions/setup-node@v4.4.0
         with:
