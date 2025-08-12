@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy
     steps:
-      - uses: actions/checkout@v4.3.0
+      - uses: actions/checkout@v5.0.0
       - uses: actions/setup-node@v4.4.0
         with:
           node-version: 22.7.0
