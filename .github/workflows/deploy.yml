@@ -8,6 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy
     steps:
+      - name: checkout
+        uses: actions/checkout@v6.0.1
+      - name: prepare node
+        uses: actions/setup-node@v6.1.0
+        with:
+          node-version: 24.11.1
+      - name: install
+        run: npm ci
       - uses: actions/checkout@v6.0.1
       - uses: actions/setup-node@v6.1.0
         with:
@@ -17,19 +25,11 @@ jobs:
       - run: npm run publish
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - name: checkout
-        uses: actions/checkout@v6.0.1
-      - name: prepare node
-        uses: actions/setup-node@v6.1.0
-        with:
-          node-version: 24.11.1
-      - name: install
-        run: npm ci
-      - name: publish wrangler
-        uses: cloudflare/wrangler-action@v3.14.1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       - name: publish
         run: npm run publish
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - name: publish wrangler
+        uses: cloudflare/wrangler-action@v3.14.1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
