@@ -65,5 +65,6 @@
       "arlac77/template-wrangler",
       "konsumation/template"
     ]
-  }
+  },
+  "license": "MIT"
 }
