@@ -1,4 +1,5 @@
 [![npm](https://img.shields.io/npm/v/@konsumation/cloudflare-worker.svg)](https://www.npmjs.com/package/@konsumation/cloudflare-worker)
+[![License](https://img.shields.io/badge/License-0BSD-blue.svg)](https://spdx.org/licenses/0BSD.html)
 [![bundlejs](https://deno.bundlejs.com/?q=@konsumation/cloudflare-worker\&badge=detailed)](https://bundlejs.com/?q=@konsumation/cloudflare-worker)
 [![downloads](http://img.shields.io/npm/dm/@konsumation/cloudflare-worker.svg?style=flat-square)](https://npmjs.org/package/@konsumation/cloudflare-worker)
 [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fkonsumation%2Fcloudflare-worker%2Fbadge\&style=flat)](https://actions-badge.atrox.dev/konsumation/cloudflare-worker/goto)
