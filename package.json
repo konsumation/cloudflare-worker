@@ -44,12 +44,7 @@
     "prettier": "^3.0.0",
     "semantic-release": "^25.0.7",
     "vitest": "^4.0.1",
-    "wrangler": "^4.111.0"
-  },
-  "overrides": {
-    "c8": {
-      "yargs": "^18.0.0"
-    }
+    "wrangler": "^4.112.0"
   },
   "repository": {
     "type": "git",
