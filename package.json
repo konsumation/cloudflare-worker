@@ -43,7 +43,7 @@
     "documentation": "^14.0.3",
     "prettier": "^3.0.0",
     "semantic-release": "^25.0.9",
-    "vitest": "^4.0.1",
+    "vitest": "^5.0.0",
     "wrangler": "^4.123.0"
   },
   "repository": {
