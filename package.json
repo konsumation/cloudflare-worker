@@ -38,13 +38,13 @@
   },
   "devDependencies": {
     "@konsumation/openapi": "^2.4.6",
-    "ava": "^8.1.1",
+    "ava": "^8.2.0",
     "c8": "^12.0.0",
     "documentation": "^14.0.3",
     "prettier": "^3.0.0",
     "semantic-release": "^25.0.9",
     "vitest": "^5.0.0",
-    "wrangler": "^4.152.0"
+    "wrangler": "^4.154.0"
   },
   "repository": {
     "type": "git",
